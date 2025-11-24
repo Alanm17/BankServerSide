@@ -18,6 +18,8 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-bank:3306/bankdb?useSSL=false&serverTimezone=UTC
     depends_on:
       - mysql-bank
 
