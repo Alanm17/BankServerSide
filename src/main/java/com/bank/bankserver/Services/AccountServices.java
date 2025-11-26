@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.bank.bankserver.entity.Account;
@@ -21,7 +22,7 @@ public class AccountServices {
     @Autowired
     private UserRepository userRepository;
 
-    public Account createAccount(Long userId, String type) {
+    public Account createAccount(@NonNull Long userId, String type) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
         Account acc = new Account();

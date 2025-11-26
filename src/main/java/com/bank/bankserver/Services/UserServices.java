@@ -3,6 +3,7 @@ package com.bank.bankserver.Services;
 import com.bank.bankserver.entity.User;
 import com.bank.bankserver.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +12,7 @@ public class UserServices {
     @Autowired
     private UserRepository userRepository;
 
-    public User register(User user) {
+    public User register(@NonNull User user) {
         return userRepository.save(user);
     }
 
@@ -24,7 +25,7 @@ public class UserServices {
         return found;
     }
 
-    public User getUser(Long userId) {
+    public User getUser(@NonNull Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
     }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.bank.bankserver.entity.Account;
@@ -20,7 +21,7 @@ public class TransferService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public Transfer transfer(Long fromId, String toNumber, BigDecimal amount) {
+    public Transfer transfer(@NonNull Long fromId, String toNumber, BigDecimal amount) {
         Account fromAcc = accountRepository.findById(fromId)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
         Account toAcc = accountRepository.findByAccountNumber(toNumber);

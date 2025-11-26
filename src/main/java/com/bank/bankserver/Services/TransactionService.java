@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.bank.bankserver.entity.Account;
@@ -18,7 +19,7 @@ public class TransactionService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public Transaction deposit(Long accountId, BigDecimal amount) {
+    public Transaction deposit(@NonNull Long accountId, BigDecimal amount) {
         Account acc = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
@@ -32,7 +33,7 @@ public class TransactionService {
         return transactionRepository.save(tx);
     }
 
-    public Transaction withdraw(Long accountId, BigDecimal amount) {
+    public Transaction withdraw(@NonNull Long accountId, BigDecimal amount) {
         Account acc = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
