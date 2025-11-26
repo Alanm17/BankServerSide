@@ -17,9 +17,9 @@ services:
     container_name: bankserver-app
     restart: always
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-bank:3306/bankdb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-bank:3306/bankdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     depends_on:
       - mysql-bank
 

@@ -13,28 +13,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bank.bankserver.Services.AccountServices;
-import com.bank.bankserver.entity.Account;
-
+import com.bank.bankserver.DTOs.AccountDTO;
 
 @RestController
 @RequestMapping("/api/accounts")
 @CrossOrigin
 public class AccountController {
+
     @Autowired
     private AccountServices accountServices;
 
     @PostMapping("/create")
-    public Account createAccount(@RequestBody Map<String, String> body) {
-        return accountServices.createAccount(Long.parseLong(body.get("userId")), body.get("type"));
+    public AccountDTO createAccount(@RequestBody Map<String, String> body) {
+        Long userId = Long.parseLong(body.get("userId"));
+        String type = body.get("type");
+        return accountServices.createAccount(userId, type);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Account> userAccounts(@PathVariable Long userId) {
+    public List<AccountDTO> userAccounts(@PathVariable Long userId) {
         return accountServices.getUserAccounts(userId);
     }
 
     @GetMapping("/number/{accNumber}")
-    public Account getByNumber(@PathVariable String accNumber) {
+    public AccountDTO getByNumber(@PathVariable String accNumber) {
         return accountServices.getByNumber(accNumber);
     }
 }

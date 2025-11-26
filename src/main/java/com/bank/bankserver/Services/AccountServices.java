@@ -3,11 +3,12 @@ package com.bank.bankserver.Services;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+import com.bank.bankserver.DTOs.AccountDTO;
 import com.bank.bankserver.entity.Account;
 import com.bank.bankserver.entity.User;
 import com.bank.bankserver.repository.AccountRepository;
@@ -22,8 +23,9 @@ public class AccountServices {
     @Autowired
     private UserRepository userRepository;
 
-    public Account createAccount(@NonNull Long userId, String type) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public AccountDTO createAccount(long userId, String type) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Account acc = new Account();
         acc.setUser(user);
@@ -31,14 +33,29 @@ public class AccountServices {
         acc.setAccountNumber(UUID.randomUUID().toString().substring(0, 10));
         acc.setBalance(BigDecimal.ZERO);
 
-        return accountRepository.save(acc);
+        Account saved = accountRepository.save(acc);
+
+        return toDTO(saved);
     }
 
-    public List<Account> getUserAccounts(Long userId) {
-        return accountRepository.findByUserUserId(userId);
+    public List<AccountDTO> getUserAccounts(long userId) {
+        return accountRepository.findByUserUserId(userId)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Account getByNumber(String number) {
-        return accountRepository.findByAccountNumber(number);
+    public AccountDTO getByNumber(String number) {
+        Account acc = accountRepository.findByAccountNumber(number);
+        return toDTO(acc);
+    }
+
+    private AccountDTO toDTO(Account acc) {
+        AccountDTO dto = new AccountDTO();
+        dto.setAccountId(acc.getAccountId());
+        dto.setAccountNumber(acc.getAccountNumber());
+        dto.setAccountType(acc.getAccountType().name());
+        dto.setBalance(acc.getBalance());
+        return dto;
     }
 }

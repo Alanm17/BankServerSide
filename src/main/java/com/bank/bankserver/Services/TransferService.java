@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.bank.bankserver.entity.Account;
 import com.bank.bankserver.entity.Transfer;
 import com.bank.bankserver.repository.AccountRepository;
 import com.bank.bankserver.repository.TransferRepository;
+import com.bank.bankserver.DTOs.TransferDTO;
+import java.util.stream.Collectors;
 
 @Service
 public class TransferService {
@@ -21,7 +22,7 @@ public class TransferService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public Transfer transfer(@NonNull Long fromId, String toNumber, BigDecimal amount) {
+    public TransferDTO transfer(long fromId, String toNumber, BigDecimal amount) {
         Account fromAcc = accountRepository.findById(fromId)
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
         Account toAcc = accountRepository.findByAccountNumber(toNumber);
@@ -42,10 +43,25 @@ public class TransferService {
         t.setAmount(amount);
         t.setDescription("Transfer");
 
-        return transferRepository.save(t);
+        Transfer saved = transferRepository.save(t);
+        return toDTO(saved);
     }
 
-    public List<Transfer> getHistory(Long accountId) {
-        return transferRepository.findByFromAccountAccountIdOrToAccountAccountId(accountId, accountId);
+    public List<TransferDTO> getHistory(long accountId) {
+        return transferRepository.findByFromAccountAccountIdOrToAccountAccountId(accountId, accountId)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private TransferDTO toDTO(Transfer t) {
+        TransferDTO dto = new TransferDTO();
+        dto.setTransferId(t.getTransferId());
+        dto.setFromAccountId(t.getFromAccount().getAccountId());
+        dto.setToAccountId(t.getToAccount().getAccountId());
+        dto.setAmount(t.getAmount());
+        dto.setTransferDate(t.getTransferDate());
+        dto.setDescription(t.getDescription());
+        return dto;
     }
 }

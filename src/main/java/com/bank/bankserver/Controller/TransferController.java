@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bank.bankserver.Services.TransferService;
-import com.bank.bankserver.entity.Transfer;
+import com.bank.bankserver.DTOs.TransferDTO;
 
 @RestController
 @RequestMapping("/api/transfers")
@@ -25,16 +25,15 @@ public class TransferController {
     private TransferService transferService;
 
     @PostMapping("/transfer")
-    public Transfer transfer(@RequestBody Map<String, String> body) {
+    public TransferDTO transfer(@RequestBody Map<String, String> body) {
         return transferService.transfer(
                 Long.parseLong(body.get("fromId")),
                 body.get("toNumber"),
-                new BigDecimal(body.get("amount"))
-        );
+                new BigDecimal(body.get("amount")));
     }
 
     @GetMapping("/{accountId}")
-    public List<Transfer> history(@PathVariable Long accountId) {
+    public List<TransferDTO> history(@PathVariable Long accountId) {
         return transferService.getHistory(accountId);
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bank.bankserver.Services.TransactionService;
-import com.bank.bankserver.entity.Transaction;
+import com.bank.bankserver.DTOs.TransactionDTO;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -24,23 +24,21 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/deposit")
-    public Transaction deposit(@RequestBody Map<String, String> body) {
+    public TransactionDTO deposit(@RequestBody Map<String, String> body) {
         return transactionService.deposit(
                 Long.parseLong(body.get("accountId")),
-                new BigDecimal(body.get("amount"))
-        );
+                new BigDecimal(body.get("amount")));
     }
 
     @PostMapping("/withdraw")
-    public Transaction withdraw(@RequestBody Map<String, String> body) {
+    public TransactionDTO withdraw(@RequestBody Map<String, String> body) {
         return transactionService.withdraw(
                 Long.parseLong(body.get("accountId")),
-                new BigDecimal(body.get("amount"))
-        );
+                new BigDecimal(body.get("amount")));
     }
 
     @GetMapping("/{accountId}")
-    public List<Transaction> history(@PathVariable Long accountId) {
+    public List<TransactionDTO> history(@PathVariable Long accountId) {
         return transactionService.history(accountId);
     }
 }
