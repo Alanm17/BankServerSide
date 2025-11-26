@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+
+<head>
+    <title>Account Details</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="card-title" style="margin-bottom: 0.5rem;">Account Details</h2>
+                    <p id="accountNumber" style="color: var(--text-secondary); margin: 0;"></p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Current Balance</div>
+                    <div id="balance" style="font-size: 2rem; font-weight: 700; color: var(--accent-color);">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Transaction History</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <!-- Transactions loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            const accountId = /*[[${accountId}]]*/ 0;
+
+            async function loadData() {
+                // Load Transactions
+                const txResponse = await fetch(`/api/transactions/${accountId}`);
+                const transactions = await txResponse.json();
+
+                // Load Transfers
+                const trResponse = await fetch(`/api/transfers/${accountId}`);
+                const transfers = await trResponse.json();
+
+                // Combine and sort
+                const allHistory = [
+                    ...transactions.map(t => ({ ...t, isTransfer: false })),
+                    ...transfers.map(t => ({ ...t, isTransfer: true, type: 'Transfer' }))
+                ].sort((a, b) => new Date(b.date) - new Date(a.date)); // Note: Date field might be null in current API, need to fix API later for dates
+
+                const tbody = document.getElementById('historyTable');
+                tbody.innerHTML = '';
+
+                allHistory.forEach(item => {
+                    const row = document.createElement('tr');
+                    const isPositive = item.type === 'Deposit' || (item.isTransfer && item.toAccountId == accountId);
+                    const amountClass = isPositive ? 'amount-positive' : 'amount-negative';
+                    const sign = isPositive ? '+' : '-';
+
+                    row.innerHTML = `
+                        <td>${new Date().toLocaleDateString()}</td> <!-- Placeholder date -->
+                        <td>${item.description}</td>
+                        <td><span style="padding: 4px 8px; background: #e4e6eb; border-radius: 4px; font-size: 0.8rem;">${item.type}</span></td>
+                        <td class="${amountClass}">${sign}$${item.amount.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Update Balance (Need to fetch account details again or calculate)
+                // For now, let's just fetch account details if we had an endpoint for single account.
+                // Since we don't have getAccountById in controller yet (only getByNumber), we might need to rely on dashboard data or add endpoint.
+                // Workaround: We will just show the balance from the last known state or fetch all user accounts and find this one.
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    const accResponse = await fetch(`/api/accounts/user/${userId}`);
+                    const accounts = await accResponse.json();
+                    const account = accounts.find(a => a.accountId == accountId);
+                    if (account) {
+                        document.getElementById('balance').innerText = `$${account.balance.toFixed(2)}`;
+                        document.getElementById('accountNumber').innerText = `${account.accountType} • ${account.accountNumber}`;
+                    }
+                }
+            }
+
+            loadData();
+        </script>
+    </th:block>
+</body>
+
+</html>

@@ -33,6 +33,12 @@ public class AccountServices {
         acc.setAccountNumber(UUID.randomUUID().toString().substring(0, 10));
         acc.setBalance(BigDecimal.ZERO);
 
+        if (acc.getAccountType() == Account.AccountType.Checking) {
+            acc.setInterestRate(new BigDecimal("0.045"));
+        } else {
+            acc.setInterestRate(BigDecimal.ZERO);
+        }
+
         Account saved = accountRepository.save(acc);
 
         return toDTO(saved);
@@ -56,6 +62,7 @@ public class AccountServices {
         dto.setAccountNumber(acc.getAccountNumber());
         dto.setAccountType(acc.getAccountType().name());
         dto.setBalance(acc.getBalance());
+        dto.setInterestRate(acc.getInterestRate());
         return dto;
     }
 }

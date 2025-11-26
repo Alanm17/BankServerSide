@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}">
+
+<head>
+    <title>Transfer Funds</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 class="card-title">Transfer Money</h2>
+            <form id="transferForm">
+                <div class="form-group">
+                    <label for="fromAccount">From Account</label>
+                    <select id="fromAccount" name="fromId" required>
+                        <!-- Options loaded via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="toNumber">Recipient Account Number</label>
+                    <input type="text" id="toNumber" name="toNumber" required placeholder="e.g. 12345678-9">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" required placeholder="0.00">
+                </div>
+                <button type="submit" class="btn btn-primary">Send Money</button>
+            </form>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            async function loadAccounts() {
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+
+                const response = await fetch(`/api/accounts/user/${userId}`);
+                const accounts = await response.json();
+
+                const select = document.getElementById('fromAccount');
+                accounts.forEach(acc => {
+                    const option = document.createElement('option');
+                    option.value = acc.accountId;
+                    option.text = `${acc.accountType} (...${acc.accountNumber.slice(-4)}) - $${acc.balance.toFixed(2)}`;
+                    select.appendChild(option);
+                });
+            }
+
+            document.getElementById('transferForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fromId = document.getElementById('fromAccount').value;
+                const toNumber = document.getElementById('toNumber').value;
+                const amount = document.getElementById('amount').value;
+
+                try {
+                    const response = await fetch('/api/transfers/transfer', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fromId, toNumber, amount })
+                    });
+
+                    if (response.ok) {
+                        alert('Transfer successful!');
+                        window.location.href = '/dashboard';
+                    } else {
+                        alert('Transfer failed. Check balance or account number.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Transfer failed');
+                }
+            });
+
+            loadAccounts();
+        </script>
+    </th:block>
+</body>
+
+</html>

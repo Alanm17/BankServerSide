@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}" th:with="hideNavbar=true">
+
+<head>
+    <title>Login</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="auth-container">
+        <div class="auth-header">
+            <h1>BankServer</h1>
+            <p>Secure, fast, and elegant banking.</p>
+        </div>
+        <div class="card">
+            <h2 class="card-title">Log In</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="/register" style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem;">Create
+                    new account</a>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const response = await fetch('/api/users/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    if (response.ok) {
+                        const user = await response.json();
+                        localStorage.setItem('userId', user.userId);
+                        localStorage.setItem('userName', user.fullName);
+                        window.location.href = '/dashboard';
+                    } else {
+                        alert('Invalid credentials');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Login failed');
+                }
+            });
+        </script>
+    </th:block>
+</body>
+
+</html>

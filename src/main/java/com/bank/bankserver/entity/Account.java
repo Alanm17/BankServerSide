@@ -28,6 +28,9 @@ public class Account {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(name = "interest_rate", precision = 5, scale = 4)
+    private BigDecimal interestRate = BigDecimal.ZERO;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -73,6 +76,14 @@ public class Account {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public BigDecimal getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(BigDecimal interestRate) {
+        this.interestRate = interestRate;
     }
 
     public LocalDateTime getCreatedAt() {
