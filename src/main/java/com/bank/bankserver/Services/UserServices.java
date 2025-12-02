@@ -13,6 +13,7 @@ public class UserServices {
     @Autowired
     private UserRepository userRepository;
 
+    @SuppressWarnings("null")
     public UserDTO register(User user) { // Changed return type and removed @NonNull
         User saved = userRepository.save(user);
         return toDTO(saved);
