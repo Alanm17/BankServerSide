@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BankServer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar hidden for login -->
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>BankServer</h1>
+            <p>Secure, fast, and elegant banking.</p>
+        </div>
+        <div class="card">
+            <h2 class="card-title">Log In</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="register.html"
+                    style="color: var(--accent-color); text-decoration: none; font-size: 0.9rem;">Create
+                    new account</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; Java Class Project.
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Simple auth check for demo purposes
+        const userId = localStorage.getItem('userId');
+        const path = window.location.pathname;
+
+        // If already logged in, redirect to dashboard
+        if (userId && (path.endsWith('index.html') || path === '/' || path.endsWith('/'))) {
+            window.location.href = 'dashboard.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    localStorage.setItem('userId', user.userId);
+                    localStorage.setItem('userName', user.fullName);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Invalid credentials');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Login failed');
+            }
+        });
+    </script>
+</body>
+
+</html>

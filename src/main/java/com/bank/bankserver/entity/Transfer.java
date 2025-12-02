@@ -25,8 +25,15 @@ public class Transfer {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "transfer_date", insertable = false, updatable = false)
+    @Column(name = "transfer_date")
     private LocalDateTime transferDate;
+
+    @PrePersist
+    public void prePersist() {
+        if (transferDate == null) {
+            transferDate = LocalDateTime.now();
+        }
+    }
 
     private String description;
 

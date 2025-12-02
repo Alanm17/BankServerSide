@@ -1,27 +1,30 @@
 version: "3.9"
+
 services:
-  mysql-bank:
-    image: mysql:8.0
-    container_name: mysql-bank
+  db:
+    image: mysql:8
+    container_name: bank_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bankdb
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
   bankserver-app:
     build: .
     container_name: bankserver-app
+    depends_on:
+      - db
     restart: always
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-bank:3306/bankdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    depends_on:
-      - mysql-bank
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bankdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
 
 volumes:
-  db_data:
+  mysql_data:

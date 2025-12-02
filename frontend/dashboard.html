@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BankServer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">BankServer</a>
+        <div class="nav-links">
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header Section -->
+        <div class="dashboard-header">
+            <div>
+                <h1>Welcome back</h1>
+                <p class="text-secondary">Here's your financial overview</p>
+            </div>
+            <div class="total-balance-card">
+                <span>Total Balance</span>
+                <h2 id="totalBalance">$0.00</h2>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-grid">
+            <button id="transferBtn" class="action-btn">
+                <span class="icon">⇄</span> Transfer
+            </button>
+            <button id="depositBtn" class="action-btn">
+                <span class="icon">↓</span> Deposit
+            </button>
+            <button id="withdrawBtn" class="action-btn">
+                <span class="icon">↑</span> Withdraw
+            </button>
+            <button id="createAccountBtn" class="action-btn primary">
+                <span class="icon">+</span> Open Account
+            </button>
+        </div>
+
+        <!-- Accounts Grid -->
+        <h3 class="section-title">Your Accounts</h3>
+        <div id="accountsGrid" class="account-grid">
+            <!-- Accounts will be injected here -->
+        </div>
+
+        <!-- Transactions Section -->
+        <h3 class="section-title">Recent Transactions</h3>
+        <div class="card table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsBody">
+                    <!-- Transactions will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Create Account Modal -->
+    <div id="createAccountModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Open New Account</h2>
+            <form id="createAccountForm">
+                <div class="form-group">
+                    <label>Account Type</label>
+                    <select id="accountType" required>
+                        <option value="Checking">Checking (4.5% APY)</option>
+                        <option value="Savings">Savings</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Transfer Money</h2>
+            <form id="transferForm">
+                <div class="form-group">
+                    <label>From Account</label>
+                    <select id="transferFrom" required></select>
+                </div>
+                <div class="form-group">
+                    <label>To Account Number</label>
+                    <input type="text" id="transferTo" required placeholder="Enter destination account number">
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="transferAmount" required min="0.01" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Transfer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Deposit Funds</h2>
+            <form id="depositForm">
+                <div class="form-group">
+                    <label>Select Account</label>
+                    <select id="depositAccount" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="depositAmount" required min="0.01" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Deposit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Withdraw Funds</h2>
+            <form id="withdrawForm">
+                <div class="form-group">
+                    <label>Select Account</label>
+                    <select id="withdrawAccount" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="withdrawAmount" required min="0.01" step="0.01">
+                </div>
+                <button type="submit" class="btn btn-primary">Withdraw</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        &copy; Java Class Project.
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Auth Check
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+    </script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

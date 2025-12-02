@@ -34,3 +34,4 @@ build/
 .vscode/
 
 /src/generated/prisma
+mysql_data/

@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadAccounts() {
     const userId = localStorage.getItem('userId');
     try {
-        const response = await fetch(`/api/accounts/user/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/accounts/user/${userId}`);
         const accounts = await response.json();
         renderAccounts(accounts);
         updateAccountSelects(accounts);
@@ -43,12 +43,12 @@ async function loadAccounts() {
 async function loadTransactions() {
     const userId = localStorage.getItem('userId');
     try {
-        const accResponse = await fetch(`/api/accounts/user/${userId}`);
+        const accResponse = await fetch(`${API_BASE_URL}/api/accounts/user/${userId}`);
         const accounts = await accResponse.json();
 
         let allTransactions = [];
         for (const acc of accounts) {
-            const txResponse = await fetch(`/api/transactions/${acc.accountId}`);
+            const txResponse = await fetch(`${API_BASE_URL}/api/transactions/${acc.accountId}`);
             const transactions = await txResponse.json();
             allTransactions = allTransactions.concat(transactions);
         }
@@ -67,7 +67,7 @@ async function handleCreateAccount(e) {
     const type = document.getElementById('accountType').value;
 
     try {
-        const response = await fetch('/api/accounts/create', {
+        const response = await fetch(`${API_BASE_URL}/api/accounts/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, type })
@@ -92,7 +92,7 @@ async function handleTransfer(e) {
     const amount = document.getElementById('transferAmount').value;
 
     try {
-        const response = await fetch('/api/transfers/transfer', {
+        const response = await fetch(`${API_BASE_URL}/api/transfers/transfer`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ fromId: fromAccountId, toNumber: toAccountNumber, amount })
@@ -118,7 +118,7 @@ async function handleDeposit(e) {
     const amount = document.getElementById('depositAmount').value;
 
     try {
-        const response = await fetch('/api/transactions/deposit', {
+        const response = await fetch(`${API_BASE_URL}/api/transactions/deposit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ accountId, amount })
@@ -143,7 +143,7 @@ async function handleWithdraw(e) {
     const amount = document.getElementById('withdrawAmount').value;
 
     try {
-        const response = await fetch('/api/transactions/withdraw', {
+        const response = await fetch(`${API_BASE_URL}/api/transactions/withdraw`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ accountId, amount })
