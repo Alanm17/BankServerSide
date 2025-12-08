@@ -27,4 +27,4 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
 
 volumes:
-  mysql_data:
+  mysql_data:  
