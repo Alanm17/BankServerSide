@@ -6,8 +6,8 @@ services:
     container_name: bank_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: bankdb
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:bankdb}
     ports:
       - "3307:3306"
     volumes:
@@ -22,9 +22,9 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bankdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:root}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:root}
 
 volumes:
-  mysql_data:  
+  mysql_data:
